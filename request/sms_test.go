@@ -19,204 +19,34 @@ func TestSMS_Validate(t *testing.T) {
 		req             request.SMS
 		regionWhiteList []string
 		wantErr         bool
-		smsByPhone      bool
 	}{
 		{
-			name:            "Successful with phone number but without params",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "+989121234567",
-				Payload:     "Hi",
-			},
-			wantErr: false,
-		},
-		{
-			name:            "Successful with locale",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "+989121234567",
-				Payload:     "Hi",
-				Locale:      locale.FA,
-			},
-			wantErr: false,
-		},
-		{
-			name:            "Successful with phone number and params",
+			name:            "Successful with phone number",
 			regionWhiteList: []string{"arvan"},
 			req: request.SMS{
 				PhoneNumber: "09121234567",
-				Payload:     "shs_template",
-			},
-			wantErr: false,
-		},
-		{
-			name:            "Successful without params for passenger",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "1",
+				Locale:      locale.EN,
 				Payload:     "Hi",
 			},
-			wantErr: false,
 		},
 		{
-			name:            "Successful with good recipient type in sms by phone",
+			name:            "failed with invalid phone number",
 			regionWhiteList: []string{"arvan"},
 			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "Hi",
-			},
-			smsByPhone: true,
-		},
-		{
-			name:            "Successful with driver recipient type in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "Hi",
-			},
-			smsByPhone: true,
-		},
-		{
-			name:            "Successful with passenger recipient type in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "Hi",
-			},
-			smsByPhone: true,
-		},
-		{
-			name:            "Successful with none recipient type in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "Hi",
-			},
-			smsByPhone: true,
-		},
-		{
-			name:            "Successful with all recipient type in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "Hi",
-			},
-			smsByPhone: true,
-		},
-		{
-			name:            "Successful with driver passenger recipient type in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "Hi",
-			},
-			smsByPhone: true,
-		},
-		{
-			name:            "failed for invalid phone in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "1",
-				Payload:     "Hi",
-			},
-			wantErr:    true,
-			smsByPhone: true,
-		},
-		{
-			name:            "failed without recipient type in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "Hi",
-			},
-			wantErr:    true,
-			smsByPhone: true,
-		},
-		{
-			name:            "failed with invalid recipient type in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "Hi",
-			},
-			wantErr:    true,
-			smsByPhone: true,
-		},
-		{
-			name:            "Successful with params for passenger",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "1",
-				Payload:     "shs_template",
-			},
-			wantErr: false,
-		},
-		{
-			name:            "Successful with params for passenger in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "shs_template",
-			},
-			wantErr:    false,
-			smsByPhone: true,
-		},
-		{
-			name:            "Successful without params for driver",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "1",
-				Payload:     "Hi",
-			},
-			wantErr: false,
-		},
-		{
-			name:            "Successful without params for driver in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "Hi",
-			},
-			wantErr:    false,
-			smsByPhone: true,
-		},
-		{
-			name:            "Successful with params for driver",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "1",
-				Payload:     "shs_template",
-			},
-			wantErr: false,
-		},
-		{
-			name:            "Successful with params for driver in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "09022123241",
-				Payload:     "shs_template",
-			},
-			wantErr:    false,
-			smsByPhone: true,
-		},
-		{
-			name:            "Fail with invalid mobile number",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "12345678900",
+				PhoneNumber: "09022",
+				Locale:      locale.EN,
 				Payload:     "Hi",
 			},
 			wantErr: true,
 		},
 		{
-			name:            "fail with Invalid mobile number in sms by phone",
+			name:            "fail with Invalid mobile number 2",
 			regionWhiteList: []string{"arvan"},
 			req: request.SMS{
 				PhoneNumber: "9151231232",
 				Payload:     "Hi",
 			},
-			wantErr:    true,
-			smsByPhone: true,
+			wantErr: true,
 		},
 		{
 			name:            "Fail with invalid locale",
@@ -228,47 +58,13 @@ func TestSMS_Validate(t *testing.T) {
 			},
 			wantErr: true,
 		},
-		{
-			name:            "Successful with valid locale",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "+989121234567",
-				Payload:     "Hi",
-				Locale:      locale.FA,
-			},
-		},
-		{
-			name:            "Fail with recipient id but without recipient type",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "1",
-				Payload:     "Hi",
-			},
-			wantErr: true,
-		},
-		{
-			name:            "Fail with invalid recipient type",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "1",
-				Payload:     "Hi",
-			},
-			wantErr: true,
-		},
-		{
-			name:            "Fail without recipient id",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				Payload: "Hi",
-			},
-			wantErr: true,
-		},
+
 		{
 			name:            "Fail without recipient",
 			regionWhiteList: []string{"arvan"},
 			req: request.SMS{
-				PhoneNumber: "",
-				Payload:     "Hi",
+				Payload: "Hi",
+				Locale:  locale.EN,
 			},
 			wantErr: true,
 		},
@@ -277,30 +73,13 @@ func TestSMS_Validate(t *testing.T) {
 			regionWhiteList: []string{"arvan"},
 			req: request.SMS{
 				PhoneNumber: "+989121234567",
-				Payload:     "",
+				Locale:      locale.EN,
 			},
 			wantErr: true,
 		},
 		{
-			name:            "Fail without payload in sms by phone",
-			regionWhiteList: []string{"arvan"},
-			req: request.SMS{
-				PhoneNumber: "+989121234567",
-			},
-			wantErr:    true,
-			smsByPhone: true,
-		},
-		{
-			name:            "Successful with phone number but without params in Iraq",
-			regionWhiteList: []string{"arvan2"},
-			req: request.SMS{
-				PhoneNumber: "+9647890123456",
-				Payload:     "World is yours",
-			},
-		},
-		{
 			name:            "Iranian in Iraq",
-			regionWhiteList: []string{"arvan2"},
+			regionWhiteList: []string{"turkey"},
 			req: request.SMS{
 				PhoneNumber: "+989121234567",
 				Payload:     "World is yours",

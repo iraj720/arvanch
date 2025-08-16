@@ -18,10 +18,10 @@ var (
 
 const (
 	minPayloadCharacterLen = 1
-	maxPayloadCharacterLen = 2
+	maxPayloadCharacterLen = 100
 
 	minPayloadByteLen = 1
-	maxPayloadByteLen = 1
+	maxPayloadByteLen = 100
 )
 
 func NewValidator() (*validator.Validate, error) {
@@ -66,16 +66,6 @@ func payloadValidation(fl validator.FieldLevel) bool {
 	return utf8.RuneCountInString(payload) >= minPayloadCharacterLen &&
 		utf8.RuneCountInString(payload) <= maxPayloadCharacterLen &&
 		len(payload) >= minPayloadByteLen && len(payload) <= maxPayloadByteLen
-}
-
-func isInSlice(str string, list []string) bool {
-	for _, v := range list {
-		if v == str {
-			return true
-		}
-	}
-
-	return false
 }
 
 // nolint:err113
