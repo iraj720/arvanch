@@ -1,0 +1,202 @@
+---
+openapi: 3.0.0
+
+info:
+  title: arvanch
+  description: arvanch is a microservice for sending SMS to passenger and drivers.
+  version: 3.67.0
+
+servers:
+  - url: http://arvanch-producer-shs-testing.apps.private.okd4.teh-1.arvancloud.io
+    description: arvanch-producer-testing
+  - url: http://arvanch-bulk-shs-testing.apps.private.okd4.teh-1.arvancloud.io
+    description: arvanch-bulk-testing
+
+tags:
+  - name: SMS
+    description: This API is used for sending an sms based on providers.
+
+paths:
+  /api/sms:
+    post:
+      summary: Sends an SMS to passengers and drivers.
+      tags:
+        - SMS
+      security:
+        - BearerAuth: []
+      description: |
+        This API asynchronously sends an SMS,
+        so getting success in this API doesn't mean
+        a successful delivery of given SMS.
+
+        **Warning:** This endpoint has some rate limitations. Check the values in the technical docs.
+      operationId: sendSMS
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipient:
+                  type: string
+                  pattern: '^0\d{10}$'
+                recipient_type:
+                  type: string
+                locale:
+                  $ref: '#/components/schemas/Locale'
+                payload:
+                  type: string
+                parameters:
+                  type: object
+                  additionalProperties:
+                    type: string
+              required:
+                - recipient
+                - payload
+            examples:
+              Normal SMS:
+                value:
+                  recipient: "09390909540"
+                  payload: Hello
+              Normal SMS With Passenger ID:
+                value:
+                  recipient: "123456"
+                  recipient_type: "passenger"
+                  payload: Hello
+              Parametrized SMS (with Template):
+                value:
+                  recipient: "09390909540"
+                  payload: hello_sms_template
+                  parameters:
+                    weekday: Saturday
+                    person: arvanch
+                  locale: fa
+      responses:
+        400:
+          description:
+            Bad Request based on recipient and payload validation.
+            These fields are required and recipient must matches standard formats.
+            This error code also retruns in cases that a template is requested which its media is not sms.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        200:
+          description: OK
+        429:
+          description:
+            The request is rejected because of the rate limitation. There are two types of rate-limiting.
+            One is per token, and the other one is per phone number. Limits are available at the Confluence page.
+  
+  /api/sms/phone:
+    post:
+      summary: Sends an SMS to a phone number.
+      tags:
+        - SMS
+      security:
+        - BearerAuth: []
+      description: |
+        This API asynchronously sends an SMS,
+        so getting success in this API doesn't mean
+        a successful delivery of given SMS.
+
+        **Warning:** This endpoint has some rate limitations. Check the values in the technical docs.
+      operationId: sendSMSByPhone
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipient:
+                  type: string
+                  pattern: '^0\d{10}$'
+                recipient_type:
+                  type: string
+                locale:
+                  $ref: '#/components/schemas/Locale'
+                payload:
+                  type: string
+                parameters:
+                  type: object
+                  additionalProperties:
+                    type: string
+              required:
+                - recipient
+                - payload
+            examples:
+              Normal SMS:
+                value:
+                  recipient: "09390909540"
+                  payload: Hello
+              Parametrized SMS (with Template):
+                value:
+                  recipient: "09390909540"
+                  payload: hello_sms_template
+                  parameters:
+                    weekday: Saturday
+                    person: arvanch
+                  locale: fa
+      responses:
+        400:
+          description:
+            Bad Request based on recipient and payload validation.
+            These fields are required and recipient must matches standard formats.
+            This error code also retruns in cases that a template is requested which its media is not sms.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        200:
+          description: OK
+        429:
+          description:
+            The request is rejected because of the rate limitation. There are two types of rate-limiting.
+            One is per token, and the other one is per phone number. Limits are available at the Confluence page.
+
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    Locale:
+      description: "Locale used in v2 endpoints"
+      type: string
+      enum:
+        - "fa"
+        - "en"
+        - "ar"
+        - "ku"
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Describe the error in plain english.
+
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          pattern: '[\w\d\-+._]+@[\w\d\-+_]+\.[\w\d]{2,3}'
+        name:
+          type: string
+
+      required:
+        - email
+
+    Sender:
+      type: object
+      properties:
+        account:
+          type: string
+          pattern: '^[a-zA-Z_.]$'
+        name:
+          type: string
+
+      required:
+        - account

@@ -1,0 +1,85 @@
+---
+# This file contains all available configuration options
+# with their default values.
+
+# options for analysis running
+run:
+  # default concurrency is a available CPU number
+  concurrency: 4
+
+  # timeout for analysis, e.g. 30s, 5m, default is 1m
+  timeout: 3m
+
+  # exit code when at least one issue was found, default is 1
+  issues-exit-code: 1
+
+  # include test files or not, default is true
+  tests: true
+
+# all available settings of specific linters
+linters-settings:
+  dupl:
+    # tokens count to trigger issue, 150 by default
+    threshold: 200
+
+linters:
+  enable-all: true
+  disable:
+    - interfacer
+    - nolintlint
+    - forbidigo
+    - wrapcheck
+    - varnamelen
+    - testpackage
+    - tparallel
+    - usestdlibvars
+    - tagliatelle
+    - stylecheck
+    - paralleltest
+    - nosnakecase
+    - nonamedreturns
+    - noctx
+    - nlreturn
+    - maintidx
+    - ireturn
+    - govet
+    - gosimple
+    - goerr113
+    - exhaustivestruct
+    - errorlint
+    - errchkjson
+    - errname
+    - cyclop
+    - nestif
+    - gosec
+    - godox
+    - godot
+    - gocritic
+    - exhaustruct
+    - forcetypeassert
+    - staticcheck
+    - ifshort
+    - nosprintfhostport
+    - gochecknoglobals
+    - exhaustive
+    - revive
+    - gofumpt
+    - gci
+    - musttag
+    - inamedparam
+    - depguard
+    - typecheck
+    - perfsprint
+    - testifylint
+    - ineffassign
+
+issues:
+  # Excluding configuration per-path, per-linter, per-text and per-source
+  exclude-rules:
+    - path: \.go
+      linters:
+        - golint
+    - path: \_test.go
+      linters:
+        - gomnd
+        - funlen
