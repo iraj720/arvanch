@@ -6,8 +6,7 @@ import (
 	"time"
 
 	"arvanch/config"
-	"arvanch/log"
-	"arvanch/security"
+	"arvanch/pkg/security"
 
 	"github.com/sirupsen/logrus"
 	"github.com/snowzach/rotatefilehook"
@@ -15,25 +14,16 @@ import (
 
 type (
 	SMSLog struct {
-		Priorities      []string
-		RegionWhiteList []string
-		ForcedProvider  string
-		Environment     string
-		Client          string
-		Organization    string
-		Venture         string
-		UUID            string
-		Payload         string
-		Recipient       string
-		RecipientType   string
-		XForwardedFor   string
-		XRealIP         string
-		RemoteAddress   string
-		Language        string
-		Error           string
-		TemplateName    string
-		MessageLength   int
-		MessageBytes    int
+		UUID          string
+		Payload       string
+		Recipient     string
+		XForwardedFor string
+		XRealIP       string
+		RemoteAddress string
+		Language      string
+		Error         string
+		MessageLength int
+		MessageBytes  int
 	}
 
 	Logger struct {
@@ -55,11 +45,8 @@ func NewAccessLogger(cfg config.CustomAccessLogger) (*Logger, error) {
 
 	if cfg.HookEnable {
 		rotateFileHook, err := rotatefilehook.NewRotateFileHook(rotatefilehook.RotateFileConfig{
-			Filename:   cfg.Path,
-			MaxSize:    log.MaxSize,
-			MaxBackups: log.MaxBackups,
-			MaxAge:     log.MaxAge,
-			Level:      logrus.InfoLevel,
+			Filename: cfg.Path,
+			Level:    logrus.InfoLevel,
 			Formatter: &logrus.JSONFormatter{
 				TimestampFormat:  time.RFC3339,
 				DisableTimestamp: false,
@@ -101,31 +88,22 @@ func (l *Logger) LogSMS(smsLog *SMSLog) {
 	}
 
 	l.logger.WithFields(logrus.Fields{
-		"environment":      smsLog.Environment,
-		"client":           smsLog.Client,
-		"organization":     smsLog.Organization,
-		"venture":          smsLog.Venture,
-		"uuid":             smsLog.UUID,
-		"priority_list":    smsLog.Priorities,
-		"forced_provider":  smsLog.ForcedProvider,
-		"payload_enc":      payloadEnc,
-		"payload_hmac":     payloadHMAC,
-		"recipient_enc":    recipientEnc,
-		"recipient_hmac":   recipientHMAC,
-		"payload":          payload,
-		"recipient":        recipient,
-		"recipient_type":   smsLog.RecipientType,
-		"secured":          l.securePayload,
-		"x_forwarded_for":  smsLog.XForwardedFor,
-		"x_real_ip":        smsLog.XRealIP,
-		"remote_address":   smsLog.RemoteAddress,
-		"error":            smsLog.Error,
-		"template_name":    smsLog.TemplateName,
-		"message_length":   smsLog.MessageLength,
-		"message_bytes":    smsLog.MessageBytes,
-		"language":         smsLog.Language,
-		"region_whitelist": smsLog.RegionWhiteList,
-		"media":            "sms",
+		"uuid":            smsLog.UUID,
+		"payload_enc":     payloadEnc,
+		"payload_hmac":    payloadHMAC,
+		"recipient_enc":   recipientEnc,
+		"recipient_hmac":  recipientHMAC,
+		"payload":         payload,
+		"recipient":       recipient,
+		"secured":         l.securePayload,
+		"x_forwarded_for": smsLog.XForwardedFor,
+		"x_real_ip":       smsLog.XRealIP,
+		"remote_address":  smsLog.RemoteAddress,
+		"error":           smsLog.Error,
+		"message_length":  smsLog.MessageLength,
+		"message_bytes":   smsLog.MessageBytes,
+		"language":        smsLog.Language,
+		"media":           "sms",
 	}).Info("sms request received")
 }
 
