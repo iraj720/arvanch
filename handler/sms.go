@@ -81,8 +81,12 @@ func (s SMSHandler) Sms(c echo.Context) error {
 	if err := req.Validate(s.reqValidator); err != nil {
 		smsLog.Error = fmt.Sprintf("sms handler: validation failed: %s", err.Error())
 
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": errors.New("request's body is not valid")})
+		fmt.Println(err)
+
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": err})
 	}
+
+	fmt.Println("hello")	
 
 	smsLog.Recipient = req.PhoneNumber
 
